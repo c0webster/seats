@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>Chris &amp; Nora Seat Finder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Dancing+Script:wght@600&display=swap">
+<style>
+/* Layout: one narrow column for a phone held at a reception entrance: names header, search, your table, the room. */
+:root{
+  --bg:#faf5ef; --surface:#fffdfb; --ink:#2a1a1e; --muted:#7a6468; --line:#ead8d3;
+  --wine:#721c2b; --wine-ink:#fffaf6; --gold:#b8924a; --blush:#f8e6e7; --pink:#e7b0b8;
+  --floor:#fdfaf8; --fixture:#f4ebe4;
+  --f-script:"Dancing Script","Brush Script MT",cursive;
+  --f-serif:"Cormorant Garamond","Cormorant",Garamond,"Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1b1013; --surface:#26161a; --ink:#f5e9ea; --muted:#c3abaf; --line:#43292f;
+  --wine:#e6a3b0; --wine-ink:#2a1015; --gold:#d8b673; --blush:#3a2228; --pink:#9a5a67;
+  --floor:#221418; --fixture:#301d22; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1b1013; --surface:#26161a; --ink:#f5e9ea; --muted:#c3abaf; --line:#43292f;
+  --wine:#e6a3b0; --wine-ink:#2a1015; --gold:#d8b673; --blush:#3a2228; --pink:#9a5a67;
+  --floor:#221418; --fixture:#301d22; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{color:var(--ink);font-family:var(--f-serif);font-size:19px;line-height:1.4;font-weight:500;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header{text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px}
+.star{width:22px;height:22px;color:var(--gold)}
+h1{font-family:var(--f-script);font-weight:600;color:var(--wine);font-size:clamp(2.6rem,12vw,3.4rem);line-height:1.05;margin:4px 0 0}
+.eyebrow{letter-spacing:.22em;text-transform:uppercase;font-weight:700;font-size:.82rem;color:var(--ink)}
+.when{font-style:italic;color:var(--muted);font-size:1rem}
+.rule{display:flex;align-items:center;gap:10px;width:70%;color:var(--gold);margin:8px 0 4px}
+.rule::before,.rule::after{content:"";flex:1;height:1px;background:var(--gold);opacity:.7}
+.search{position:relative}
+.search label{display:block;font-weight:700;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+#q{width:100%;font:600 1.25rem/1.2 var(--f-serif);color:var(--ink);background:var(--surface);border:1.5px solid var(--gold);border-radius:12px;padding:14px 44px 14px 16px;outline:none;-webkit-appearance:none;appearance:none}
+#q::-webkit-search-cancel-button,#q::-webkit-search-decoration{-webkit-appearance:none;appearance:none;display:none}
+#q::placeholder{color:var(--muted);font-weight:500;font-style:italic}
+#q:focus-visible{border-color:var(--wine);box-shadow:0 0 0 3px color-mix(in srgb,var(--wine) 22%,transparent)}
+#clear{position:absolute;right:8px;bottom:9px;width:34px;height:34px;border:0;border-radius:50%;background:transparent;color:var(--muted);font-size:1.4rem;line-height:1;cursor:pointer}
+#clear:focus-visible{outline:2px solid var(--wine)}
+.hint{color:var(--muted);font-size:.95rem;font-style:italic;text-align:center}
+.results{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.results h3{margin:0;padding:10px 16px 4px;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.res{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:inherit;background:none;border:0;border-top:1px solid var(--line);padding:12px 16px;cursor:pointer}
+.results h3+.res{border-top:0}
+.res:hover,.res:focus-visible{background:var(--blush);outline:none}
+.res .nm{flex:1;min-width:0;font-size:1.15rem}
+.res .nm b{font-weight:700}
+.pill{font-weight:700;font-variant-numeric:lining-nums tabular-nums;color:var(--wine);white-space:nowrap;font-size:1.05rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 18px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:12px}
+.seat{display:flex;align-items:center;gap:16px}
+.disc{flex:none;width:86px;height:86px;border-radius:50%;background:var(--wine);color:var(--wine-ink);display:grid;place-items:center;font-weight:700;font-size:2.6rem;font-variant-numeric:lining-nums;box-shadow:0 0 0 4px var(--surface),0 0 0 5.5px var(--gold)}
+.disc.sw{font-size:1.9rem}
+.who{min-width:0}
+.who .lbl{font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.who .name{font-size:1.6rem;line-height:1.15;font-weight:700;text-wrap:balance}
+.who .tbl{font-size:1.1rem;color:var(--wine);font-weight:600}
+.mates h4{margin:0 0 6px;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.mates ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 16px}
+.mates li{font-size:1.05rem;min-width:0}
+.mapbox{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 10px 10px}
+.mapbox h2{margin:0 0 8px;text-align:center;font-size:.85rem;letter-spacing:.22em;text-transform:uppercase;font-weight:700}
+.mapbox p{margin:6px 0 0;text-align:center;color:var(--muted);font-size:.92rem;font-style:italic}
+svg{display:block;width:100%;height:auto}
+.wall{stroke:var(--wine);stroke-width:5;fill:none}
+.room{fill:var(--floor)}
+.fx{fill:var(--fixture);stroke:var(--gold);stroke-width:2}
+.fx.dance{fill:var(--blush)}
+.fxl{fill:var(--ink);font:700 22px var(--f-serif);letter-spacing:2px;text-anchor:middle;text-transform:uppercase}
+.ent{fill:var(--wine);font:700 22px var(--f-serif);letter-spacing:3px;text-anchor:middle}
+.tb{cursor:pointer}
+.tb circle{fill:var(--surface);stroke:var(--wine);stroke-width:3.5}
+.tb text{fill:var(--wine);font:700 34px var(--f-serif);text-anchor:middle;dominant-baseline:central;font-variant-numeric:lining-nums;pointer-events:none}
+.tb.on circle{fill:var(--wine);stroke:var(--gold);stroke-width:5}
+.tb.on text{fill:var(--wine-ink)}
+.tb:focus-visible circle{stroke:var(--gold);stroke-width:6}
+.tb:focus{outline:none}
+.halo{fill:none;stroke:var(--gold);stroke-width:4}
+.sweet{fill:var(--wine)}
+.heart{fill:var(--pink)}
+.foot{text-align:center;color:var(--muted);font-size:.95rem;font-style:italic}
+@media (prefers-reduced-motion:no-preference){
+  .halo{animation:pulse 1.8s ease-out infinite;transform-box:fill-box;transform-origin:center}
+  @keyframes pulse{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.7)}}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <svg class="star" viewBox="-10 -10 20 20" aria-hidden="true"><path fill="currentColor" d="M0-10 2.9-7 7.1-7.1 7-2.9 10 0 7 2.9 7.1 7.1 2.9 7 0 10-2.9 7-7.1 7.1-7 2.9-10 0-7-2.9-7.1-7.1-2.9-7Z"/></svg>
+    <h1>Chris &amp; Nora</h1>
+    <div class="rule" aria-hidden="true">✦</div>
+    <div class="eyebrow">Find your seat</div>
+    <div class="when">Sunday, October 18, 2026 · Chateau Del Mar</div>
+  </header>
+
+  <form class="search" id="form" autocomplete="off">
+    <label for="q">Your name</label>
+    <input id="q" type="search" inputmode="search" enterkeyhint="search" placeholder="Type your first or last name" autocapitalize="words" spellcheck="false">
+    <button type="button" id="clear" aria-label="Clear search" hidden>×</button>
+  </form>
+
+  <div id="out" aria-live="polite"></div>
+
+  <section class="mapbox" aria-labelledby="maph">
+    <h2 id="maph">The Barcelona Room</h2>
+    <svg id="map" viewBox="20 20 1265 680" role="img" aria-label="Map of the reception room with numbered tables"></svg>
+    <p id="maphint">Tap any table to see who's sitting there.</p>
+  </section>
+
+  <p class="foot">Can't find your name? Ask at the entrance and we'll help you to your seat.</p>
+</div>
+
+<script>
+(function(){
+const DATA={"guests":[["Basima","Gonzalez","30"],["Kevin","Gonzalez","30"],["Wafieh","Nassar","30"],["Ana","Montoya","30"],["Luis","Montoya","30"],["Eric","Webster","12"],["Brian","Webster","12"],["Blair","Webster","12"],["Katy","Webster","12"],["Andrea","Herrera","13"],["Itzamar","Herrera Ojeda","13"],["Juan","Herrera","13"],["Matilde","Herrera","13"],["Denise","Herrera","13"],["Erica","Herrera","13"],["Javier","Castro","13"],["Khadija","Echakar","12"],["Mohamed","Ait Boucherbil","12"],["Hannah","Roberts","31"],["Hannah","Chow","32"],["Matthew","Chow","32"],["Rylee","Trueblood","31"],["Tim","Madden","24"],["Andrew","Fulkerson","24"],["Elizabeth","Sanchez","31"],["Andrew","Ekelem","23"],["Aichem","Malubay","13"],["Selah","Fornelli","31"],["Jacob","Fine","23"],["Lin","Liu","23"],["Damien","Koussis","11"],["Vyshnavi","Kosigi","11"],["Noah","Bouch","25"],["Malika","Aarab","5"],["Mohamed","Aitelmahjoub","29"],["Nahed","Mokhtar","5"],["Nora","Khattabi","6"],["Achraf","Khattabi","28"],["Coco","Mungai","30"],["Mawili","Kariuki","30"],["Grey","Golla","22"],["Katie","Mathison","22"],["Brahim","Bouzouai","27"],["Youssef","Bouzouai","27"],["Zinab","Mohamed","5"],["Sam","Anschell","17"],["Sarah","Dobbins","17"],["Erskine","Nyoike","30"],["Eve","La Puma","22"],["Peter","Guglielmino","22"],["Soham","Ray","22"],["Chesley","Ekelem","30"],["Ngozi","Ekelem","30"],["Simon","Koser","11"],["Kearney","Capuano","19"],["Jess","Stratton","19"],["Charlie","George","10"],["Juasheem","Sultan","20"],["Josh","Jacobson","21"],["Isabella","Heyden","21"],["Vaidehi","Agarwalla","19"],["Alex","Friedrichsen","19"],["Jacob","Palmerio","20"],["Juliette","Bendheim","20"],["Delaney","Eisen","11"],["Andrew","Masley","21"],["Elika","Somani","21"],["Benji","Gering","21"],["Fadela","Tagzine","4"],["Grandma Fatouma","Moutawakil","12"],["Grandpa Elhassan","Ait Boucherbil","12"],["Reese","O'Craven","11"],["Kris","Gulati","10"],["Masha","Winchell","10"],["Trevor","Levin","10"],["Sam","Heeter","24"],["Maddy","Heeter Zmuda Bentz","24"],["Michael","Townsend","17"],["Diana","Knott","17"],["Douaa","Echakar","4"],["Zahra","Ihassane","4"],["Mohamed","Echakar","28"],["Lucas","Schmuck","17"],["Lea","Cavalli","17"],["Molly","Kovite","19"],["Lilah","Penner Brown","18"],["Max","Nadeau","18"],["Joe","Benton","17"],["Jana","Guraziu","17"],["Syed","Rahman","23"],["Aisha","Mouss","2"],["Omaima","Mouss","2"],["Laila","Mouss","4"],["Rachid","Mouss","25"],["Lina","Mouss","2"],["Rayan","Mouss","2"],["Hassaan","Adnan","2"],["Mariyah","Pickett","2"],["Sella","Nevo","3"],["Gavriel","Kleinwaks","21"],["Nayely","Hurtado","31"],["Asia","Miller","20"],["Ella","Lautzenheiser","20"],["Shreya","Nagdev","14"],["Stacey","Heras","14"],["Elena","Herrejon","14"],["Gianna","Herrejon","14"],["Bryce","Emanuel","20"],["Lily","Hsu","19"],["Lukas","Berglund","32"],["Samuel","Miller","13"],["Sterling","Johnson","13"],["Meiko","Flynn-Do","17"],["Will","Hodgkins","11"],["Ankita","Kodavoor","11"],["Aric","Floyd","10"],["George","Rosenfeld","18"],["Citlalic","Hurtado","31"],["John","Healy","24"],["Madu","Healy","24"],["Laura","Lopez-De la Cruz","31"],["Wade","Burnette","22"],["Cassandra","Walls","20"],["Annie","McCrone","32"],["Alexis","Carlier","3"],["Anne","le Roux","3"],["Nico","Carlier","3"],["Angelica","Villalba","3"],["Zach","Wilson","24"],["Tom","Pink","24"],["Courtney","Gary","24"],["Hala","El Solh","9"],["Sean","Farhat-Sabet","9"],["Peily","Tan","20"],["Chris","Yankah","23"],["Anne","Babalola","23"],["Anjay","Friedman","32"],["Maya","Deutchmann","32"],["Moira","Webster-Larranaga","12"],["Ihssan","Ait Boucherbil","31"],["Sophia","Ait Boucherbil","9"],["Hannah","Ait Boucherbil","31"],["Uriel","Garcia","22"],["Alan","Gastelum","22"],["Leslie","Bunte","22"],["Eric","Bunte","22"],["Rachel","Shu","21"],["Myers","Weidner","20"],["Taylor","Kulp-McDowall","10"],["Gabe","Fried","10"],["Luca","Righetti","3"],["Kuhan","Jeyapragasan","10"],["Bastian","Krohg","11"],["Arushi","Gupta","10"],["Danielle","Liu","23"],["Mitch","Madden","24"],["John","Croxton","10"],["John","Dees","23"],["Maddy","Kim","23"],["Jennifer","Zecena","11"],["Evan","Chapman","11"],["Iris","Haik","9"],["Sydney","Haik","9"],["Claire","DeHaven","32"],["Matthew","DeHaven","32"],["Nora","Ait Boucherbil","S"],["Chris","Webster","S"],["Genevieve","Chiola","20"],["Jackson","Radler","20"],["Christos","Karantais","32"],["Mary","Chen","32"],["Abie","Rohrig","18"],["Manjot","Pahwa","14"],["Rebca","van de Ven","19"],["Daniel","Zuo","19"],["Natalie","Lee","9"],["Mya","Lee","9"],["Samantha","Ball","9"],["Philip","Gubbins","32"],["Maura","Taylor","19"],["Paul","Opheim","21"],["Pegah","Maham","3"],["Tobias","Manuel Ziegler","3"],["Lamia","Hotaia","16"],["Bassem","Atef","27"],["Assia","Benomar","6"],["AbdelJouad","Benomar","28"],["Moneer","Benomar","28"],["Sanae","Jameel","16"],["Rania","Jameel","16"],["Karima","Kiliouine","15"],["Iman","Aghanim","8"],["Redouane","Aghrib","33"],["Kholoud","Omran","16"],["Aya","Abdullah","16"],["Mimi","Abdullah","16"],["Maryam","Abdullah","14"],["Raja","Gamra","8"],["Mohamed","Gamra","33"],["Mounia","Fraihi","8"],["Mahdi","Elmaaroufi","27"],["Hajar","Chami","6"],["Amal","Safrioui","6"],["Rasha","El Madani","6"],["Saadia","Souaber","7"],["Nora","Arjsiri","7"],["Fatima","Quintero","7"],["Fouzia","Khalidi","6"],["Dina","Khalidi","6"],["Nisha","Austin","19"],["Max","Daniel","18"],["Phillip","Greene","21"],["Julian","Hazell","18"],["Jake","Mendel","17"],["Quincy","Ponvert","18"],["Tanae","Rao","18"],["Kasey","Shibayama","18"],["Eva","Siegmann","18"],["Hannah","Yang","21"],["Latifa","Agoutim Brika","7"],["Rime","Brika","7"],["Yasmine","Brika","7"],["Hafida","Chaouni","7"],["Souad","Gourchane","15"],["Ranyia","Gourchane","15"],["Jasmine","Dhaliwal","3"],["Hakima","Bouabdallaoui","7"],["Majda","Hirich","15"],["Houda","Hirich","15"],["Rachida","Hotaia","16"],["Hassan","Hotaia","27"],["Yassine","Maarach","26"],["Yassir","Abushamich","26"],["Khadija","Matalib","5"],["Adam","Matalib","28"],["Anas","Matalib","28"],["Malak","Matalib","5"],["Mostafa","Tamim","1"],["Maria","Henretty","1"],["Asaad","Hijab","1"],["Maureen","Hijab","1"],["Nouman","Ait Abdellah","26"],["Alisha","Ait Abdellah","15"],["Lamia","Ait Abdellah","15"],["Aliyah","Ait Abdellah","15"],["Adam","Ait Abdellah","26"],["Mohammed","Elmehdi","25"],["Amal","Elmehdi","16"],["Kaoutar","Rouane","6"],["Marwa","Chowdhury","6"],["Alaa","Chowdhury","6"],["Houda","Hotaia","16"],["Ahmad","Omar","27"],["Maher","Almrayati","28"],["Amani","Albadawi","4"],["Aisha","Moujoud","5"],["Mouloud","Ait Bih","29"],["Aouatif","Ahtitou","5"],["Hicham","Cherradi","27"],["Alaa","Jassim","27"],["Malik","Jassim","27"],["Wasim","Shafiq","26"],["Rafia","Rana","14"],["Jenna","Ferreira","2"],["Itzel","Molina","2"],["Abdelhak","Almouden","27"],["Jorge","Ramirez","26"],["Fraz","Satti","26"],["Hanan","Elfhadi","5"],["Omar","Ichou","29"],["Loubna","Lachguer","7"],["Ahmed","Kamni","25"],["Salma","Kamni","8"],["Amin","Kamni","25"],["Salah","Abdellah","25"],["Mokhtar","Charmouh","29"],["Khadija","Asgane","4"],["Adam","Charmouh","29"],["Youssef","Charmouh","29"],["Chakib","Doghmi","28"],["Lotfi","Doghmi","28"],["Hassan","Azlag","29"],["Yasmina","Berremaili","5"],["Saida","Lachguar","7"],["Chakib","Khalid","1"],["Veronika","Khalid","1"],["Laura","Myers","1"],["Norah","Hafdi","1"],["DJ","Hicham","33"],["Youssef","(Dakkah Band)","33"],["Aimad","(Dakkah Band)","33"],["Amin","(Dakkah Band)","33"],["Mohamed","(Dakkah Band)","33"],["Khalid","(Dakkah Band)","33"],["Sara","(Dakkah Band)","33"],["Mohamed","(Dakkah Band)","33"],["Liv","Barwinska","34"],["Jenni","Hardin","34"],["Sophia","Salkeld","34"],["Priscilla","Rodriguez","34"],["Ayanna","Squires","31"],["Khalid","Mouss","25"],["Lamiae","Nejjar","15"],["Sidra","Mouss","15"],["Walid","Mouss","25"],["Mariam","Echakar","4"],["Jad","Guentour","2"],["Shaheen","Guentour","2"],["Fatima","Moutawakil","12"],["Ahmed","Abukar","29"],["Ruqiya","Ashir","5"],["Sanaa","Maazi","1"],["Larry","Mendonca","1"],["Lupita","Albor","31"],["Mellouk","Zoubir","26"],["Naji","Ghanimah","28"],["Reem","Ghanimah","8"],["Fatna","Elharti","8"],["Driss","Eskawi","29"],["Muhanad","Khatib","25"],["Moe","Khatib","25"],["Zohra","Cherfaoui","8"],["Alexander","Link","23"],["Sana","Khan","14"],["Mouna","Filali","14"],["Hind","Griner","9"],["Kai","Griner","9"],["Malika","Ouabi","16"],["Amina","Khellil","4"],["Soudjoud","Khellil","4"],["Houda","Fenzar","8"],["Ilham","Fenzar","8"],["Ayah","Fenzar","8"],["Abderrahim","Ait Boucharbil","26"],["Andrew","DiMonda","34"],["Derek","XCite Photography","34"],["James","XCite Photography","34"]],"tables":{"1":{"x":210.5,"y":88.9},"2":{"x":308.9,"y":88.9},"3":{"x":407.2,"y":88.9},"4":{"x":686.0,"y":88.9},"5":{"x":791.1,"y":88.9},"6":{"x":896.1,"y":88.9},"7":{"x":1001.2,"y":88.9},"8":{"x":1106.2,"y":88.9},"9":{"x":210.5,"y":189.1},"10":{"x":308.9,"y":189.1},"11":{"x":407.2,"y":189.1},"12":{"x":686.0,"y":189.1},"13":{"x":791.1,"y":189.1},"14":{"x":896.1,"y":189.1},"15":{"x":1001.2,"y":189.1},"16":{"x":1106.2,"y":189.1},"17":{"x":164.0,"y":278.0},"18":{"x":686.0,"y":346.4},"19":{"x":791.1,"y":346.4},"20":{"x":896.1,"y":346.4},"21":{"x":1001.2,"y":346.4},"22":{"x":210.5,"y":452.5},"23":{"x":308.9,"y":452.5},"24":{"x":407.2,"y":452.5},"25":{"x":686.0,"y":452.5},"26":{"x":791.1,"y":452.5},"27":{"x":896.1,"y":452.5},"28":{"x":1001.2,"y":452.5},"29":{"x":1106.2,"y":452.5},"30":{"x":210.5,"y":564.7},"31":{"x":308.9,"y":564.7},"32":{"x":407.2,"y":564.7},"33":{"x":1106.2,"y":346.4},"34":{"x":1198.0,"y":130.0}},"fixtures":[{"id":"dance","x":455,"y":68,"w":160,"h":493,"label":"Dance floor"},{"id":"dj","x":454,"y":569,"w":160,"h":41,"label":"DJ"},{"id":"cakeslice","x":632,"y":574,"w":130,"h":32,"label":"Dessert"},{"id":"bar","x":780,"y":522,"w":295,"h":107,"label":"Bar"},{"id":"lounge","x":55,"y":76,"w":88,"h":170,"label":"Moroccan lounge"},{"id":"booth","x":1098,"y":542,"w":90,"h":70,"label":"Photo booth"}],"sweetheart":{"x":535,"y":82}};
+const $=id=>document.getElementById(id);
+const NS="http://www.w3.org/2000/svg";
+const fold=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9 ]+/g," ").replace(/\s+/g," ").trim();
+const guests=DATA.guests.map(([f,l,t],i)=>{const full=fold(f+" "+l);return{i,f,l,t,full,toks:full.split(" ")}});
+const tableLabel=t=>t==="S"?"Sweetheart table":"Table "+t;
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const nameHTML=g=>`${esc(g.f)} <b>${esc(g.l)}</b>`;
+const byLast=(a,b)=>(a.l+a.f).localeCompare(b.l+b.f);
+
+function lev(a,b){if(a===b)return 0;const m=a.length,n=b.length;if(!m)return n;if(!n)return m;let p=Array.from({length:n+1},(_,j)=>j);for(let i=1;i<=m;i++){const c=[i];for(let j=1;j<=n;j++)c[j]=Math.min(p[j]+1,c[j-1]+1,p[j-1]+(a[i-1]===b[j-1]?0:1));p=c}return p[n]}
+
+function search(q){
+  const qq=fold(q); if(!qq)return{exact:[],near:[]};
+  const qt=qq.split(" ");
+  const exact=guests.filter(g=>g.full.includes(qq)||qt.every(t=>g.toks.some(x=>x.startsWith(t))));
+  if(exact.length)return{exact:exact.sort(byLast),near:[]};
+  if(qq.length<3)return{exact:[],near:[]};
+  // close spellings: compare each typed word with each name word
+  const scored=guests.map(g=>{let s=0;for(const t of qt){let best=99;for(const x of g.toks){const d=lev(t,x.slice(0,Math.max(t.length,x.length)));if(d<best)best=d}s+=best}return{g,s}});
+  const lim=Math.max(1,Math.round(qq.length/4));
+  return{exact:[],near:scored.filter(r=>r.s<=lim).sort((a,b)=>a.s-b.s||byLast(a.g,b.g)).slice(0,8).map(r=>r.g)};
+}
+
+let selTable=null;
+function render(){
+  const q=$("q").value; $("clear").hidden=!q;
+  const out=$("out");
+  if(!q.trim()){out.innerHTML='<p class="hint">Start typing and your name will appear.</p>';return}
+  const {exact,near}=search(q);
+  if(exact.length===1){showGuest(exact[0]);return}
+  const list=exact.length?exact:near;
+  if(!list.length){out.innerHTML=`<p class="hint">No one matches “${esc(q.trim())}”. Try just your first name or just your last name.</p>`;setTable(null);return}
+  out.innerHTML=`<div class="results"><h3>${exact.length?`${list.length} matches · tap your name`:"Did you mean"}</h3>${list.slice(0,40).map(g=>`<button type="button" class="res" data-i="${g.i}"><span class="nm">${nameHTML(g)}</span><span class="pill">${tableLabel(g.t)}</span></button>`).join("")}</div>`;
+  if(list.length>40)out.firstChild.insertAdjacentHTML("beforeend",'<h3>Keep typing to narrow it down</h3>');
+  out.querySelectorAll(".res").forEach(b=>b.addEventListener("click",()=>showGuest(guests[+b.dataset.i],true)));
+  setTable(null);
+}
+function card(title,label,t,mates,matesTitle){
+  return `<article class="card" id="card"><div class="seat"><div class="disc${t==="S"?" sw":""}" aria-hidden="true">${t==="S"?"♥":esc(t)}</div><div class="who"><div class="lbl">${label}</div><div class="name">${title}</div><div class="tbl">${tableLabel(t)}</div></div></div>${mates.length?`<div class="mates"><h4>${matesTitle}</h4><ul>${mates.map(m=>`<li>${nameHTML(m)}</li>`).join("")}</ul></div>`:""}</article>`;
+}
+function showGuest(g,scroll){
+  const mates=guests.filter(x=>x.t===g.t&&x!==g).sort(byLast);
+  $("out").innerHTML=card(nameHTML(g),"Welcome",g.t,mates,"At your table");
+  setTable(g.t);
+  if(scroll)$("card").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+}
+function showTable(t){
+  const at=guests.filter(x=>x.t===t).sort(byLast);
+  $("out").innerHTML=card(tableLabel(t),"Seated here",t,at,`${at.length} guests`).replace('<div class="tbl">'+tableLabel(t)+'</div>','');
+  setTable(t);
+  $("card").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
+}
+
+/* ---------- map ---------- */
+const el=(tag,a,p)=>{const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const tnodes={};
+function drawMap(){
+  const svg=$("map");
+  el("rect",{x:40,y:40,width:1222,height:592,class:"room"},svg);
+  el("path",{d:"M40 608 V40 H1262 V632 H870 M770 632 H150",class:"wall"},svg);
+  for(const [x,label] of [[95,"ENTRANCE"],[820,"ENTRANCE"]]){
+    el("path",{d:`M${x} 640 l-14 22 h28 Z`,fill:"var(--wine)"},svg);
+    const t=el("text",{x,y:690,class:"ent"},svg);t.textContent=label;
+  }
+  for(const f of DATA.fixtures){
+    el("rect",{x:f.x,y:f.y,width:f.w,height:f.h,rx:4,class:"fx"+(f.id==="dance"?" dance":"")},svg);
+    const words=f.label.toUpperCase().split(" ");
+    const tall=f.h>f.w*1.5;
+    const g=el("g",{transform:`translate(${f.x+f.w/2} ${f.y+f.h/2})${tall?" rotate(-90)":""}`},svg);
+    const lines=(f.id==="dance"||tall||f.id==="booth")?words:[words.join(" ")];
+    lines.forEach((w,i)=>{const t=el("text",{x:0,y:(i-(lines.length-1)/2)*26+8,class:"fxl"},g);t.textContent=w;if(f.id==="dance")t.setAttribute("style","font-size:30px")});
+  }
+  const s=DATA.sweetheart;
+  el("rect",{x:s.x-62,y:s.y-17,width:124,height:34,rx:5,class:"sweet"},svg);
+  el("path",{d:`M${s.x} ${s.y+10} c-22 -12 -18 -26 -8 -26 c5 0 8 4 8 6 c0 -2 3 -6 8 -6 c10 0 14 14 -8 26Z`,class:"heart"},svg);
+  for(const [id,p] of Object.entries(DATA.tables)){
+    const g=el("g",{class:"tb",transform:`translate(${p.x} ${p.y})`,tabindex:0,role:"button","aria-label":`Table ${id}`},svg);
+    el("circle",{r:38},g);
+    const t=el("text",{x:0,y:2},g);t.textContent=id;
+    g.addEventListener("click",()=>showTable(id));
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();showTable(id)}});
+    tnodes[id]=g;
+  }
+}
+function setTable(t){
+  for(const g of Object.values(tnodes)){g.classList.remove("on");const h=g.querySelector(".halo");if(h)h.remove()}
+  selTable=t;
+  if(t&&tnodes[t]){const g=tnodes[t];g.classList.add("on");g.insertBefore(el("circle",{r:40,class:"halo"}),g.firstChild);g.parentNode.appendChild(g)}
+}
+
+drawMap();
+$("q").addEventListener("input",render);
+$("form").addEventListener("submit",e=>{e.preventDefault();const b=$("out").querySelector(".res");if(b)b.click();$("q").blur()});
+$("clear").addEventListener("click",()=>{$("q").value="";render();$("q").focus()});
+render();
+})();
+</script>
+
+</body>
+</html>
